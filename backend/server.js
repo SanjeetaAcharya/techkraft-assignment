@@ -13,12 +13,14 @@ const app = express();
 
 app.use(helmet());  
 
-app.use(cors({
+const corsOptions = {
   origin: "https://techkraft-assignment.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
-}));
-app.options("*", cors());
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
