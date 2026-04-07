@@ -1,13 +1,16 @@
 # BuyerPortal
 
-A full-stack real-estate buyer portal where users can register, log in,
-browse property listings, and save favourites — all scoped privately per user.
+A full-stack real-estate buyer portal where users can register, log in, browse property listings, and save favourites — all scoped privately per user.
+
+**Live Demo**
+- Frontend: https://techkraft-assignment.vercel.app
+- Backend: https://techkraft-assignment.onrender.com
 
 ---
 
 ## Tech Stack
 
-**Backend:** Node.js, Express, MongoDB (Mongoose), JWT, bcryptjs  
+**Backend:** Node.js, Express, MongoDB (Mongoose), JWT, bcryptjs
 **Frontend:** React (Vite), React Router, Axios
 
 ---
@@ -33,17 +36,33 @@ TECHKRAFT-ASSIGN/
 │   ├── package.json
 │   └── server.js
 └── frontend/
+    ├── public/
+    │   ├── images/
+    │   ├── favicon.svg
+    │   └── icons.svg
     ├── src/
+    │   ├── assets/
+    │   │   ├── hero.png
+    │   │   ├── react.svg
+    │   │   └── vite.svg
     │   ├── components/
     │   │   └── PrivateRoute.jsx
     │   ├── context/
     │   │   └── AuthContext.jsx
-    │   └── pages/
-    │       ├── Login.jsx
-    │       ├── Register.jsx
-    │       └── Dashboard.jsx
+    │   ├── pages/
+    │   │   ├── Dashboard.jsx
+    │   │   ├── Login.jsx
+    │   │   └── Register.jsx
+    │   ├── App.css
+    │   ├── App.jsx
+    │   ├── index.css
+    │   ├── main.jsx
+    │   └── styles.js
     ├── .env
-    └── package.json
+    ├── eslint.config.js
+    ├── index.html
+    ├── package.json
+    └── vite.config.js
 ```
 
 ---
@@ -60,8 +79,8 @@ TECHKRAFT-ASSIGN/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/SanjeetaAcharya/TECHKRAFT-ASSIGN.git
-cd TECHKRAFT-ASSIGN
+git clone https://github.com/SanjeetaAcharya/techkraft-assignment.git
+cd techkraft-assignment
 ```
 
 ---
@@ -119,18 +138,20 @@ Frontend runs at: `http://localhost:5173`
 
 ### Auth
 
-| Method | Endpoint             | Body                        | Description        |
-| ------ | -------------------- | --------------------------- | ------------------ |
-| POST   | `/api/auth/register` | `{ name, email, password }` | Register new user  |
-| POST   | `/api/auth/login`    | `{ email, password }`       | Login, returns JWT |
+| Method | Endpoint             | Body                          | Description        |
+|--------|----------------------|-------------------------------|--------------------|
+| POST   | `/api/auth/register` | `{ name, email, password }`   | Register new user  |
+| POST   | `/api/auth/login`    | `{ email, password }`         | Login, returns JWT |
 
-### Favourites (all require `Authorization: Bearer <token>`)
+### Favourites
 
-| Method | Endpoint              | Body                                     | Description                   |
-| ------ | --------------------- | ---------------------------------------- | ----------------------------- |
-| GET    | `/api/favourites`     | —                                        | Get current user's favourites |
-| POST   | `/api/favourites`     | `{ propertyId, title, location, price }` | Add a favourite               |
-| DELETE | `/api/favourites/:id` | —                                        | Remove a favourite (own only) |
+> All routes require `Authorization: Bearer <token>` header.
+
+| Method | Endpoint              | Body                                       | Description                   |
+|--------|-----------------------|--------------------------------------------|-------------------------------|
+| GET    | `/api/favourites`     | —                                          | Get current user's favourites |
+| POST   | `/api/favourites`     | `{ propertyId, title, location, price }`   | Add a favourite               |
+| DELETE | `/api/favourites/:id` | —                                          | Remove a favourite (own only) |
 
 ---
 
@@ -183,7 +204,7 @@ curl -X DELETE http://localhost:5000/api/favourites/<favourite_id> \
 
 - Passwords hashed with bcrypt (salt rounds: 10)
 - JWT with 7-day expiry
-- Auth rate limited to 20 requests per 15 minutes
+- Auth routes rate limited to 20 requests per 15 minutes
 - Users can only read/delete their own favourites
 - HTTP security headers via Helmet
 
@@ -192,7 +213,7 @@ curl -X DELETE http://localhost:5000/api/favourites/<favourite_id> \
 ## Environment Variables
 
 | Variable       | Where    | Description                |
-| -------------- | -------- | -------------------------- |
+|----------------|----------|----------------------------|
 | `MONGO_URI`    | backend  | MongoDB connection string  |
 | `JWT_SECRET`   | backend  | Secret for signing JWTs    |
 | `PORT`         | backend  | Server port (default 5000) |
