@@ -12,7 +12,6 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 app.use(helmet());  
-const cors = require("cors");
 
 app.use(cors({
   origin: "https://techkraft-assignment.vercel.app",
