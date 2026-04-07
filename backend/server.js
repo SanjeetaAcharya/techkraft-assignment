@@ -13,10 +13,24 @@ const app = express();
 
 app.use(helmet());  
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://techkraft-assignment.vercel.app'
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
+app.options('*', cors());
 
 app.use(express.json());
 
