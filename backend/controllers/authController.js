@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -10,11 +11,31 @@ const generateToken = (user) => {
   );
 };
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email and password are all required' });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' });
+    }
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return res.status(400).json({ message: 'Password must contain at least one letter and one number' });
+    }
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      return res.status(400).json({ message: 'Name cannot be blank' });
+    }
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
     }
@@ -22,8 +43,8 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
-      email,
+      name: trimmedName,
+      email: email.toLowerCase(),
       password: hashedPassword
     });
 
@@ -32,15 +53,23 @@ const register = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err); 
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
@@ -55,7 +84,7 @@ const login = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 };
 
