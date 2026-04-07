@@ -12,8 +12,15 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 app.use(helmet());  
+const cors = require("cors");
 
-https://techkraft-assignment.onrender.com/health
+app.use(cors({
+  origin: "https://techkraft-assignment.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+app.options("*", cors());
+
 app.use(express.json());
 
 const authLimiter = rateLimit({
